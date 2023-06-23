@@ -29,6 +29,8 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head, router } from "@inertiajs/vue3";
 import { useToast } from "vue-toastification";
 import { ref } from "vue";
+import store from "@/store.js";
+import {d} from "../../../../public/build/assets/app-86fdfe3a.js";
 
 export default {
     components: { AuthenticatedLayout, Head, router },
@@ -38,9 +40,10 @@ export default {
         const message = ref('');
         const correctAnswers = ref(0);
         const toast = useToast();
+        const difficulty = store.difficulty;
         async function loadQuestion() {
             try {
-                const response = await axios.get('/skeletal-muscle-room/question');
+                const response = await axios.get(`/skeletal-muscle-room/${difficulty}/question`);
                 const {question: loadedQuestion, options: loadedOptions} = response.data;
 
                 question.value = loadedQuestion;
@@ -56,14 +59,41 @@ export default {
                 question.value = null;
                 options.value = [];
                 correctAnswers.value++;
+
+                axios.post('/score/add')
+                    .then(response => {
+                        store.addScore(response.data.score)
+                        isOver();
+                    }).catch(error => {
+                    console.log(error);
+                });
+
+                if (correctAnswers.value === 3) {
+                    toast.info('Parabéns! Você conseguiu vencer as salas! Você será redirecionado para a tela inicial!');
+                    router.visit('/dashboard')
+                }
+
             } else {
-                toast.info('Você errou! Tente novamente!');
-            }
-            if (correctAnswers.value === 3) {
-                toast.info('Parabéns! Você conseguiu sair da sala!');
-                router.push('/rooms');
+                toast.info('A resposta está errada! Você perdeu 2 pontos!');
+                axios.post('/score/subtract')
+                    .then(response => {
+                        store.subtractScore(response.data.score)
+                        isOver();
+                    }).catch(error => {
+                    console.log(error);
+                });
             }
         }
+
+        function isOver() {
+            if (store.state.score < 0) {
+                toast.info('Você perdeu todos os pontos! Você será redirecionado para a tela inicial!');
+                setTimeout(() => {
+                    router.visit('/dashboard')
+                }, 2000);
+            }
+        }
+
         return {
             question,
             options,

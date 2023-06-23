@@ -28,6 +28,7 @@ import { Head, router } from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { ref } from "vue";
 import { useToast } from "vue-toastification";
+import store from "@/store.js";
 
 export default {
     components: {AuthenticatedLayout, Head},
@@ -40,9 +41,10 @@ export default {
         const message = ref('');
         const correctAnswers = ref(0);
         const toast = useToast();
+        const difficulty = store.difficulty;
         async function loadQuestion() {
             try {
-                const response = await axios.get('/head-room/question');
+                const response = await axios.get(`/head-room/${difficulty}/question`);
                 const {question: loadedQuestion, options: loadedOptions} = response.data;
 
                 question.value = loadedQuestion;
@@ -58,12 +60,38 @@ export default {
                 question.value = null;
                 options.value = [];
                 correctAnswers.value++;
+
+                axios.post('/score/add')
+                    .then(response => {
+                        store.addScore(response.data.score)
+                        isOver();
+                    }).catch(error => {
+                    console.log(error);
+                });
+
+                if (correctAnswers.value === 3) {
+                    toast.info('Parabéns! Você conseguiu sair da sala!');
+                    router.visit('abdomen-room');
+                }
+
             } else {
-                toast.info('Você errou! Tente novamente!');
+                toast.info('A resposta está errada! Você perdeu 2 pontos!');
+                axios.post('/score/subtract')
+                    .then(response => {
+                        store.subtractScore(response.data.score)
+                        isOver();
+                    }).catch(error => {
+                    console.log(error);
+                });
             }
-            if (correctAnswers.value === 3) {
-                toast.info('Parabéns! Você conseguiu sair da sala!');
-                router.visit('abdomen-room');
+        }
+
+        function isOver() {
+            if (store.state.score < 0) {
+                toast.info('Você perdeu todos os pontos! Você será redirecionado para a tela inicial!');
+                setTimeout(() => {
+                    router.visit('/dashboard')
+                }, 2000);
             }
         }
         return {

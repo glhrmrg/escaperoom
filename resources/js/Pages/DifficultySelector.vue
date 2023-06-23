@@ -1,24 +1,53 @@
 <template>
     <Head title="Menu" />
     <AuthenticatedLayout>
-    <div class="main-container">
-        <div class="main-menu">
-            <h1 class="main-menu-title">Radiologia Escape</h1>
-            <div class="main-menu-buttons">
-                <Link href="difficulty">
-                    <button class="main-menu-button">Jogar</button>
-                </Link>
-                <button class="main-menu-button">Sobre</button>
-                <button class="main-menu-button">Créditos</button>
+        <div class="main-container">
+            <div class="main-menu">
+                <h1 class="main-menu-title">Dificuldade</h1>
+                <div class="main-menu-buttons">
+                    <button class="main-menu-button" @click="selectDifficulty(1)">Fácil</button>
+                    <button class="main-menu-button" @click="selectDifficulty(2)">Media</button>
+                    <button class="main-menu-button" @click="selectDifficulty(3)">Difícil</button>
+                </div>
             </div>
         </div>
-    </div>
     </AuthenticatedLayout>
 </template>
 
-<script setup>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, Link } from '@inertiajs/vue3';
+<script>
+
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
+import { Head, Link, router } from "@inertiajs/vue3";
+import store from "@/store.js";
+
+export default {
+    components: {
+        AuthenticatedLayout,
+        Head,
+        Link,
+    },
+    setup() {
+        const selectDifficulty = (value) => {
+            store.difficulty = value;
+            redirectToRoom()
+        };
+        const redirectToRoom = () => {
+            if (store.difficulty === 1) {
+                router.visit('/chest-room');
+            } else if (store.difficulty === 2) {
+                router.visit('/chest-room');
+            } else if (store.difficulty === 3) {
+                router.visit('/chest-room');
+            }
+        };
+        return {
+            selectDifficulty,
+            redirectToRoom,
+        }
+    },
+}
+
+
 </script>
 
 <style>
@@ -64,11 +93,6 @@ body {
     user-select: none;
 }
 
-.main-menu-sub-title {
-    font-size: 1.5em;
-    margin-top: 0;
-}
-
 .main-menu-buttons {
     display: flex;
     flex-direction: column;
@@ -88,12 +112,5 @@ body {
 
 .main-menu-button:hover {
     background-color: #999;
-}
-
-.footer {
-    color: #fff;
-    font-size: 0.8em;
-    transform: translateY(150px);
-    user-select: none;
 }
 </style>
