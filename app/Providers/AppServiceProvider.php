@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Http\Request;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -17,8 +18,10 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      */
-    public function boot(): void
+    public function boot(Request $request): void
     {
-        //
+        if ($request->header('X-Forwarded-Proto') === 'https') {
+            $this->app['url']->forceScheme('https');
+        }
     }
 }
