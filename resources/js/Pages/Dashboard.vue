@@ -8,8 +8,6 @@
                 <Link href="difficulty">
                     <button class="main-menu-button">Jogar</button>
                 </Link>
-                <button class="main-menu-button">Sobre</button>
-                <button class="main-menu-button">Créditos</button>
             </div>
         </div>
     </div>
