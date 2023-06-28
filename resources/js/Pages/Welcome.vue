@@ -19,10 +19,12 @@ defineProps({
 });
 
 
-const goToMenu = () => {
-    window.location.href = "/dashboard";
+function logout() {
+    axios.post('/logout')
+        .then(response => {
+            window.location.href = '/register';
+    });
 }
-
 </script>
 
 <template>
@@ -30,28 +32,17 @@ const goToMenu = () => {
         <div class="main-container">
             <div class="main-menu">
                 <h1 class="main-menu-title">Escape Room: Radiologia</h1>
-                <div class="main-menu-buttons" v-if="!canLogin">
+                <div class="main-menu-buttons">
                     <button class="main-menu-button">
-                        <Link
-                            :href="route('login')"
-                        >Entrar
-                        </Link>
+                        <a href="login">Entrar</a>
                     </button>
-                    <button class="main-menu-button">
-                        <Link
-                            v-if="canRegister"
-                            :href="route('register')"
-                        >Registrar-se
-                        </Link>
+                    <button class="main-menu-button" @click="logout">
+                        <a href="register">Registrar-se</a>
                     </button>
                 </div>
-                <div class="main-menu-buttons" v-else>
+                <div class="main-menu-buttons">
                     <button class="main-menu-button">
-                        <Link
-                            v-if="$page.props.auth.user"
-                            :href="route('dashboard')"
-                        >Menu
-                        </Link>
+                        <a href="https://forms.gle/6Sq1QAMNbSStZDsQ6">Feedback</a>
                     </button>
                 </div>
             </div>
