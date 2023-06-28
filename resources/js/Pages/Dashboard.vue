@@ -3,7 +3,7 @@
     <AuthenticatedLayout>
     <div class="main-container">
         <div class="main-menu">
-            <h1 class="main-menu-title">Radiologia Escape</h1>
+            <h1 class="main-menu-title">Escape Room: Radiologia</h1>
             <div class="main-menu-buttons">
                 <Link href="difficulty">
                     <button class="main-menu-button">Jogar</button>
@@ -64,11 +64,6 @@ body {
     user-select: none;
 }
 
-.main-menu-sub-title {
-    font-size: 1.5em;
-    margin-top: 0;
-}
-
 .main-menu-buttons {
     display: flex;
     flex-direction: column;
@@ -88,12 +83,5 @@ body {
 
 .main-menu-button:hover {
     background-color: #999;
-}
-
-.footer {
-    color: #fff;
-    font-size: 0.8em;
-    transform: translateY(150px);
-    user-select: none;
 }
 </style>
